@@ -53,14 +53,6 @@ test('aveArray() handles truthy/falsy values', () => {
   expect(f(arr)).toBe(0.5);
 });
 
-test('getMouseButtonsPressed() works', () => {
-  const f = util.getMouseButtonsPressed;
-
-  expect(f({buttons: 3})).toStrictEqual([1, 2]);
-  expect(f({buttons: 12})).toStrictEqual([4, 8]);
-  expect(f({buttons: 9})).toStrictEqual([1, 8]);
-});
-
 test('getDistanceBetweenPoints() works', () => {
   const f = util.getDistanceBetweenPoints;
 

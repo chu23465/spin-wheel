@@ -79,10 +79,6 @@ export function translateXYToElement(point = {x: 0, y: 0}, element = {}, deviceP
   };
 }
 
-export function getMouseButtonsPressed(event = {}) {
-  return [1, 2, 4, 8, 16].filter(i => event.buttons & i);
-}
-
 /**
  * Source: https://stackoverflow.com/a/47653643/737393
  */
