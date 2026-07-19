@@ -1,9 +1,44 @@
 import {Wheel} from '../../../dist/spin-wheel-esm.js';
 import {loadFonts, loadImages} from '../../../scripts/util.js';
 import {props} from './props.js';
+//import {dateFormat} from '../../../scripts/util.js' 
+
+//console.log(dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
+
+
+const domain = "localhost:4879";
+const path = domain + + '/api/users';
 
 window.onload = async () => {
+  function postLabels (labelsJSON) {
+    fetch(path, {
+      method: "POST",
+      body: JSON.stringify(labelsJSON),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+      .then((response) => {if (!response.ok) {console.log(response.json())}});
+      //.then((json) => console.log(json));
+  }
 
+  function getLabelsJSON(onlyLabel = false, wheel = window.wheel) {
+    let itemArray = [];
+    window.wheel._items.forEach((x) => {itemArray.push({label: x._label, weight: x._weight, backgroundColor: x._backgroundColor, labelColor: x._labelColor})})
+    return {leavesArray: itemArray};
+  }
+  function clearLeaves() {
+    if(confirm("Are you sure you want to clear leaves?") == true) {
+      let temp = props[dropdown.selectedIndex];
+      temp.items = [];
+      window.wheel._items = [];
+      window.wheel.init({
+        ...temp,
+        rotation: wheel.rotation, // Preserve value.
+      });
+      window.wheel.refresh();
+    }
+  }
   await loadFonts(props.map(i => i.itemLabelFont));
 
   const wheel = new Wheel(document.querySelector('.wheel-wrapper'));
@@ -45,7 +80,66 @@ window.onload = async () => {
   // Save object globally for easy debugging.
   window.wheel = wheel;
 
-  const btnSpin = document.querySelector('button');
+  const btnSpin = document.getElementById("spinnerButton");
+  const btnClearLeaves = document.getElementById("clearLeaves");
+  const btnAddLeaves = document.getElementById("addLeaves");
+  const popup = document.getElementById("popup");
+  const leafEntryField = document.getElementById("leafEntry");
+  const btnAddLeaf = document.getElementById("addLeaf");
+  const btnSubmitLeaves = document.getElementById("submitLeaves");
+  const addLeavesQueueDiv = document.getElementById("addLeavesQueue");
+
+  let inputItems = [];
+  let parsedInputJSON = [];
+  btnAddLeaf.addEventListener("click", (e) => {
+    e.preventDefault();
+    let value = leafEntryField.value.trim();
+
+    if (!value) return;
+
+    inputItems.push(value);
+    leafEntryField.value = "";
+    leafEntryField.focus();
+    value = "";
+
+    //addLeavesQueueDiv.innerHTML += `<input id="{}">`; // TODO Form spawn for each entry with weight, labelColor, backgroundColor fields
+    addLeavesQueueDiv.innerHTML = inputItems.toLocaleString();
+
+  });
+
+  btnSubmitLeaves.addEventListener("click", (e) => {
+
+    parsedInputJSON = [];
+
+    e.preventDefault();
+    if (leafEntryField.value.trim() !== "") { btnAddLeaf.click() };
+    popup.classList.add("hidden");
+    let temp = props[dropdown.selectedIndex];
+    inputItems.forEach((x) => {parsedInputJSON.push(JSON.parse(`{"label": "${x}"}`))});
+    if(document.getElementById("clearCheck").checked === true) {
+      clearLeaves();
+      temp.items = parsedInputJSON;
+    } else {
+      temp.items = temp.items.concat(parsedInputJSON);
+    }
+
+    window.wheel.init({
+      ...temp,
+      rotation: wheel.rotation, // Preserve value.
+    });
+    window.wheel.refresh();
+
+    inputItems = [];
+
+    postLabels(getLabelsJSON())
+  });
+
+  leafEntryField.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      btnAddLeaf.click();
+    }
+  });
   let modifier = 0;
 
   window.addEventListener('click', (e) => {
@@ -56,8 +150,19 @@ window.onload = async () => {
       wheel.spinTo(winningItemRotaion, duration);
     }
 
+    if (e.target === btnClearLeaves) {
+      clearLeaves();
+    }
+
+    if (e.target === btnAddLeaves) {
+      popup.classList.remove("hidden");
+      leafEntryField.focus();
+    }
+    
+
   });
 
+  console.log(getLabelsJSON());
   function calcSpinToValues() {
     const duration = 3000;
     const winningItemRotaion = getRandomInt(360, 360 * 1.75) + modifier;

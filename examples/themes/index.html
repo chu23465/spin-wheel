@@ -14,8 +14,22 @@
   <div class="gui-wrapper">
     <p>Click-drag (or touch-flick) to spin the wheel.</p>
     <div>
-      <button>Spin</button>
+      <button id="spinnerButton">Spin</button>
+      <button id="clearLeaves">Clear</button>
+      <button id="addLeaves">Add</button>
       <p><label>Theme:</label><select></select></p>
+    </div>
+  </div>
+
+  <div id="popup" class="hidden">
+    <div class="modal">
+      <tr> <td>Clear Items  </td><td><input type="checkbox" id="clearCheck"></td></tr>
+      <h2>Add Item</h2>
+      <div id="addLeavesQueue"></div>
+      <input id="leafEntry">
+      <button id="addLeaf">Add</button>
+      <button id="submitLeaves">Done</button>
+
     </div>
   </div>
 

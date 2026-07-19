@@ -1,11 +1,12 @@
-#!/usr/bin/env node
 import esbuild from 'esbuild';
 import {readFile} from 'fs/promises';
 import * as util from './util.js';
 import * as browsersync from 'browser-sync';
 
-function startWebServer (startPath) {
 
+console.log(util.dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
+
+function startWebServer (startPath) {
   browsersync.create();
 
   browsersync.init({
@@ -18,6 +19,7 @@ function startWebServer (startPath) {
       ],
   });
 
+
 }
 
 const p = JSON.parse(
@@ -28,8 +30,7 @@ const p = JSON.parse(
 
 const entryPoint = process.argv.filter(i => i.startsWith('-entryPoint='))[0]?.substring(12);
 const servePath = process.argv.filter(i => i.startsWith('-servePath='))[0]?.substring(11);
-const servePathNpm = process.env.npm_config_servepath;
-const shouldStartWebServer = !!servePathNpm || !!servePath;
+const shouldStartWebServer = !!servePath;
 const format = process.argv.includes('-iife') ? 'iife' : 'esm';
 const preamble = [
   `/**\n`,
@@ -57,4 +58,4 @@ try {
   process.exit(1);
 }
 
-if (shouldStartWebServer) startWebServer(servePathNpm || servePath);
+if (shouldStartWebServer) startWebServer(servePath);
