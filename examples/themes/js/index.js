@@ -6,8 +6,8 @@ import {props} from './props.js';
 //console.log(dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
 
 
-const domain = "localhost:4879";
-const path = domain + + '/api/users';
+const domain = "localhost:5000";
+const path = domain + + '/api/';
 
 window.onload = async () => {
   function postLabels (labelsJSON) {
