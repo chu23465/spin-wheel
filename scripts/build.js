@@ -4,9 +4,10 @@ import * as util from './util.js';
 import * as browsersync from 'browser-sync';
 
 
-console.log(util.dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
+
 
 function startWebServer (startPath) {
+  console.log(util.dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
   browsersync.create();
 
   browsersync.init({
@@ -21,7 +22,6 @@ function startWebServer (startPath) {
 
 
 }
-
 const p = JSON.parse(
   await readFile(
     new URL('../package.json', import.meta.url)
@@ -42,7 +42,7 @@ const preamble = [
 ];
 
 try {
-  await esbuild.build({
+  const ctx = await esbuild.context({
     entryPoints: [entryPoint],
     outfile: `dist/${p.name}-${format}.js`,
     bundle: true,
@@ -50,9 +50,9 @@ try {
     target: ['es6'],
     format: format,
     globalName: 'spinWheel', // This setting is only for IIFE format.
-    watch: shouldStartWebServer,
     banner: {'js': preamble.join('')},
-  })
+  });
+  await ctx.watch(startWebServer);
 } catch (error) {
   console.error(error);
   process.exit(1);
