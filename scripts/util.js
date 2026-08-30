@@ -48,7 +48,7 @@ export async function loadImages(images = []) {
   try {
     await Promise.all(promises);
   } catch (error) {
-    throw new Error('An image could not be loaded');
+    throw new Error('An image could not be loaded', { cause: error });
   }
 }
 

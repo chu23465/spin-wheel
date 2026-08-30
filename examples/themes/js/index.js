@@ -1,9 +1,6 @@
-import {Wheel} from '../../../dist/spin-wheel-esm.js';
+import {Wheel} from "spin-wheel";
 import {loadFonts, loadImages} from '../../../scripts/util.js';
 import {props} from './props.js';
-//import {dateFormat} from '../../../scripts/util.js' 
-
-//console.log(dateFormat(new Date (), "%Y-%m-%d %H:%M:%S"));
 
 
 const domain = "localhost:5000";
